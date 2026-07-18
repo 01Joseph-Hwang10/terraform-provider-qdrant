@@ -25,7 +25,7 @@ To use this provider, add it to your Terraform configuration:
 terraform {
   required_providers {
     qdrant = {
-      source = "hwanghyeongyu/qdrant" # Assuming published under this namespace
+      source = "01Joseph-Hwang10/qdrant"
     }
   }
 }
