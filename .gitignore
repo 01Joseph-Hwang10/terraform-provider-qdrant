@@ -1,0 +1,37 @@
+# Compiled binaries
+terraform-provider-qdrant
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of 'go install'
+bin/
+
+# Local terraform files
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# GPG keys (never commit these)
+*.gpg
+*.asc
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Dependency directories
+vendor/

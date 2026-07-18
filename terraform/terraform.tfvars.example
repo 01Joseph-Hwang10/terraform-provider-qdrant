@@ -1,0 +1,9 @@
+github_owner      = "your-github-username"
+github_repository = "terraform-provider-qdrant"
+gpg_private_key   = <<-EOT
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+
+... your private key ...
+-----END PGP PRIVATE KEY BLOCK-----
+EOT
+gpg_passphrase    = "your-gpg-passphrase"
