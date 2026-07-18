@@ -3,10 +3,12 @@ package provider
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -62,14 +64,24 @@ func (r *CollectionResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"size": schema.Int64Attribute{
 							MarkdownDescription: "Vector size.",
 							Required:            true,
+							PlanModifiers: []planmodifier.Int64{
+								int64planmodifier.RequiresReplace(),
+							},
 						},
 						"distance": schema.StringAttribute{
 							MarkdownDescription: "Distance metric. Options: Cosine, Euclidian, Dot.",
 							Required:            true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.RequiresReplace(),
+							},
 						},
 						"name": schema.StringAttribute{
 							MarkdownDescription: "Vector name. Optional if only one vector is defined.",
 							Optional:            true,
+							Computed:            true,
+							PlanModifiers: []planmodifier.String{
+								stringplanmodifier.RequiresReplace(),
+							},
 						},
 					},
 				},
@@ -155,6 +167,13 @@ func (r *CollectionResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
+	// Ensure computed fields like vector name are filled if they are null in plan but exist in state
+	for i := range data.Vectors {
+		if data.Vectors[i].Name.IsUnknown() {
+			data.Vectors[i].Name = types.StringNull()
+		}
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -184,17 +203,32 @@ func (r *CollectionResource) Read(ctx context.Context, req resource.ReadRequest,
 	data.Vectors = []VectorModel{}
 
 	if params := vConfig.GetParams(); params != nil {
+		nameValue := types.StringNull()
+		// Qdrant returns Params for unnamed vectors, but we need to check if it was originally named ""
+		// but since we map unnamed vectors to Params and named to ParamsMap, this logic holds.
 		data.Vectors = append(data.Vectors, VectorModel{
 			Size:     types.Int64Value(int64(params.Size)),
 			Distance: types.StringValue(r.unmapDistance(params.Distance)),
-			Name:     types.StringNull(),
+			Name:     nameValue,
 		})
 	} else if paramsMap := vConfig.GetParamsMap(); paramsMap != nil {
-		for name, params := range paramsMap.GetMap() {
+		mapParams := paramsMap.GetMap()
+		names := make([]string, 0, len(mapParams))
+		for name := range mapParams {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+
+		for _, name := range names {
+			params := mapParams[name]
+			nameValue := types.StringValue(name)
+			if name == "" {
+				nameValue = types.StringNull()
+			}
 			data.Vectors = append(data.Vectors, VectorModel{
 				Size:     types.Int64Value(int64(params.Size)),
 				Distance: types.StringValue(r.unmapDistance(params.Distance)),
-				Name:     types.StringValue(name),
+				Name:     nameValue,
 			})
 		}
 	}
