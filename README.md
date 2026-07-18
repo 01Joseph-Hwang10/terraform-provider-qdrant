@@ -1,7 +1,7 @@
 # Terraform Provider for Qdrant
 
-[![CI](https://github.com/hwanghyeongyu/terraform-provider-qdrant/actions/workflows/test.yml/badge.svg)](https://github.com/hwanghyeongyu/terraform-provider-qdrant/actions/workflows/test.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/hwanghyeongyu/terraform-provider-qdrant)](https://goreportcard.com/report/github.com/hwanghyeongyu/terraform-provider-qdrant)
+[![CI](https://github.com/01Joseph-Hwang10/terraform-provider-qdrant/actions/workflows/test.yml/badge.svg)](https://github.com/01Joseph-Hwang10/terraform-provider-qdrant/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/01Joseph-Hwang10/terraform-provider-qdrant)](https://goreportcard.com/report/github.com/01Joseph-Hwang10/terraform-provider-qdrant)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
 This is a Terraform provider for managing [Qdrant](https://qdrant.tech/) vector database resources. It allows you to manage collections and payload field indexes using HashiCorp Configuration Language (HCL).
@@ -107,7 +107,7 @@ output "collection_names" {
 
 ```bash
 # Clone the repository
-git clone https://github.com/hwanghyeongyu/terraform-provider-qdrant
+git clone https://github.com/01Joseph-Hwang10/terraform-provider-qdrant
 cd terraform-provider-qdrant
 
 # Build the provider
